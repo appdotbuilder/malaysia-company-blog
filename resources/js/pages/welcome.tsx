@@ -84,26 +84,26 @@ export default function Welcome({ featuredPosts, featuredCompanies, featuredRevi
             <section className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-20">
                 <div className="container mx-auto px-4 text-center">
                     <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                        🇲🇾 Malaysia Business Hub
+                        📰 Malaysia Business Blog
                     </h1>
                     <p className="text-xl md:text-2xl mb-8 opacity-90">
-                        Your trusted source for company reviews, business insights, and industry news in Malaysia
+                        Your premier destination for Malaysian business insights, company reviews, and industry analysis
                     </p>
                     <p className="text-lg mb-10 max-w-3xl mx-auto opacity-80">
-                        Discover verified companies, read authentic reviews, and stay updated with the latest business news. 
-                        Connect with Malaysia's top businesses and make informed decisions.
+                        Stay ahead with expert analysis, breaking business news, and comprehensive company reviews. 
+                        Join thousands of professionals who trust our platform for the latest Malaysian business intelligence.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-3">
-                            <Link href="/companies">
-                                <Building2 className="mr-2 h-5 w-5" />
-                                Browse Companies
+                            <Link href="/blog">
+                                <FileText className="mr-2 h-5 w-5" />
+                                📚 Read Latest Articles
                             </Link>
                         </Button>
                         <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-3">
-                            <Link href="/blog">
-                                <FileText className="mr-2 h-5 w-5" />
-                                Read Latest News
+                            <Link href="/companies">
+                                <Building2 className="mr-2 h-5 w-5" />
+                                🏢 Browse Companies
                             </Link>
                         </Button>
                     </div>
@@ -197,17 +197,77 @@ export default function Welcome({ featuredPosts, featuredCompanies, featuredRevi
                 </div>
             </section>
 
-            {/* Latest Blog Posts */}
+            {/* Featured Blog Posts - Main Content */}
             <section className="py-16 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">📰 Latest Business News</h2>
-                        <p className="text-gray-600 text-lg">Stay informed with the latest insights from Malaysia's business landscape</p>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">🔥 Featured Business Articles</h2>
+                        <p className="text-gray-600 text-lg">Deep dive into Malaysia's business world with expert analysis and breaking news</p>
                     </div>
                     
+                    {/* Hero Article */}
+                    {featuredPosts[0] && (
+                        <div className="mb-12">
+                            <Card className="overflow-hidden hover:shadow-xl transition-shadow">
+                                <div className="md:flex">
+                                    {featuredPosts[0].featured_image && (
+                                        <div className="md:w-1/2">
+                                            <img 
+                                                src={featuredPosts[0].featured_image} 
+                                                alt={featuredPosts[0].title}
+                                                className="w-full h-64 md:h-full object-cover"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className={`p-8 ${featuredPosts[0].featured_image ? 'md:w-1/2' : 'w-full'}`}>
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <Badge className="bg-red-100 text-red-800">🔥 Featured</Badge>
+                                            <Badge variant="outline">{featuredPosts[0].category}</Badge>
+                                            <span className="text-sm text-gray-500">
+                                                {new Date(featuredPosts[0].published_at).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
+                                            {featuredPosts[0].title}
+                                        </h3>
+                                        <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                                            {featuredPosts[0].excerpt}
+                                        </p>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                                                <span className="flex items-center">
+                                                    <Users className="w-4 h-4 mr-1" />
+                                                    By {featuredPosts[0].author.name}
+                                                </span>
+                                                <span className="flex items-center">
+                                                    <FileText className="w-4 h-4 mr-1" />
+                                                    {featuredPosts[0].views.toLocaleString()} views
+                                                </span>
+                                            </div>
+                                            <Button asChild size="lg">
+                                                <Link href={`/blog/${featuredPosts[0].slug}`}>
+                                                    📖 Read Full Article
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                        {featuredPosts.slice(0, 6).map((post) => (
+                        {featuredPosts.slice(1, 7).map((post) => (
                             <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                                {post.featured_image && (
+                                    <div className="aspect-video overflow-hidden">
+                                        <img 
+                                            src={post.featured_image} 
+                                            alt={post.title}
+                                            className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                        />
+                                    </div>
+                                )}
                                 <CardHeader>
                                     <div className="flex items-center gap-2 mb-2">
                                         <Badge variant="outline">{post.category}</Badge>
@@ -215,7 +275,11 @@ export default function Welcome({ featuredPosts, featuredCompanies, featuredRevi
                                             {new Date(post.published_at).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <CardTitle className="text-xl line-clamp-2">{post.title}</CardTitle>
+                                    <CardTitle className="text-xl line-clamp-2 hover:text-blue-600 transition-colors">
+                                        <Link href={`/blog/${post.slug}`}>
+                                            {post.title}
+                                        </Link>
+                                    </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-gray-600 line-clamp-3 mb-4">
@@ -228,7 +292,7 @@ export default function Welcome({ featuredPosts, featuredCompanies, featuredRevi
                                         </div>
                                         <Button asChild size="sm" variant="outline">
                                             <Link href={`/blog/${post.slug}`}>
-                                                Read More
+                                                Read More →
                                             </Link>
                                         </Button>
                                     </div>
@@ -238,9 +302,9 @@ export default function Welcome({ featuredPosts, featuredCompanies, featuredRevi
                     </div>
                     
                     <div className="text-center">
-                        <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700">
+                        <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-lg px-8 py-3">
                             <Link href="/blog">
-                                Read All Articles →
+                                📰 Explore All Articles
                             </Link>
                         </Button>
                     </div>

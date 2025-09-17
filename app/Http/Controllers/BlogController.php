@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBlogPostRequest;
+use App\Http\Requests\UpdateBlogPostRequest;
 use App\Models\BlogPost;
 use Inertia\Inertia;
 
@@ -48,6 +50,33 @@ class BlogController extends Controller
     }
 
     /**
+     * Show the form for creating a new blog post.
+     */
+    public function create()
+    {
+        $categories = BlogPost::distinct()
+            ->pluck('category')
+            ->filter()
+            ->sort()
+            ->values();
+
+        return Inertia::render('blog/create', [
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * Store a newly created blog post in storage.
+     */
+    public function store(StoreBlogPostRequest $request)
+    {
+        $post = BlogPost::create($request->validated());
+
+        return redirect()->route('blog.show', $post)
+            ->with('success', 'Blog post created successfully.');
+    }
+
+    /**
      * Display the specified blog post.
      */
     public function show(BlogPost $post)
@@ -71,5 +100,44 @@ class BlogController extends Controller
             'post' => $post,
             'relatedPosts' => $relatedPosts,
         ]);
+    }
+
+    /**
+     * Show the form for editing the specified blog post.
+     */
+    public function edit(BlogPost $post)
+    {
+        $categories = BlogPost::distinct()
+            ->pluck('category')
+            ->filter()
+            ->sort()
+            ->values();
+
+        return Inertia::render('blog/edit', [
+            'post' => $post,
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * Update the specified blog post in storage.
+     */
+    public function update(UpdateBlogPostRequest $request, BlogPost $post)
+    {
+        $post->update($request->validated());
+
+        return redirect()->route('blog.show', $post)
+            ->with('success', 'Blog post updated successfully.');
+    }
+
+    /**
+     * Remove the specified blog post from storage.
+     */
+    public function destroy(BlogPost $post)
+    {
+        $post->delete();
+
+        return redirect()->route('blog.index')
+            ->with('success', 'Blog post deleted successfully.');
     }
 }

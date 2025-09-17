@@ -1,10 +1,10 @@
 import React from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import AppShell from '@/components/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Search, Eye, User, Calendar, Star, Building2, Award } from 'lucide-react';
+import { FileText, Search, Eye, User, Calendar, Star, Building2, Award, Plus, Edit } from 'lucide-react';
 import type { PaginatedData, PaginationLink } from '@/types/pagination';
 
 interface BlogPost {
@@ -33,6 +33,7 @@ interface Props {
 }
 
 export default function BlogIndex({ posts, categories, recentPosts, filters }: Props) {
+    const { auth } = usePage<{ auth: { user: { id: number; name: string } | null } }>().props;
     const [searchTerm, setSearchTerm] = React.useState(filters.search || '');
     const [selectedCategory, setSelectedCategory] = React.useState(filters.category || '');
 
@@ -64,11 +65,21 @@ export default function BlogIndex({ posts, categories, recentPosts, filters }: P
                     {/* Main Content */}
                     <div className="lg:col-span-2">
                         {/* Header */}
-                        <div className="mb-8">
-                            <h1 className="text-4xl font-bold mb-4">📰 Business Blog</h1>
-                            <p className="text-gray-600 text-lg">
-                                Stay updated with the latest business insights and industry news from Malaysia
-                            </p>
+                        <div className="mb-8 flex justify-between items-center">
+                            <div>
+                                <h1 className="text-4xl font-bold mb-4">📰 Business Blog</h1>
+                                <p className="text-gray-600 text-lg">
+                                    Stay updated with the latest business insights and industry news from Malaysia
+                                </p>
+                            </div>
+                            {auth.user && (
+                                <Button asChild>
+                                    <Link href={route('blog.create')}>
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        New Post
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
 
                         {/* Filters */}
@@ -153,11 +164,21 @@ export default function BlogIndex({ posts, categories, recentPosts, filters }: P
                                                     {post.views.toLocaleString()} views
                                                 </span>
                                             </div>
-                                            <Button asChild size="sm">
-                                                <Link href={`/blog/${post.slug}`}>
-                                                    Read More →
-                                                </Link>
-                                            </Button>
+                                            <div className="flex gap-2">
+                                                {auth.user && (
+                                                    <Button asChild size="sm" variant="outline">
+                                                        <Link href={route('blog.edit', post.id)}>
+                                                            <Edit className="w-4 h-4 mr-1" />
+                                                            Edit
+                                                        </Link>
+                                                    </Button>
+                                                )}
+                                                <Button asChild size="sm">
+                                                    <Link href={`/blog/${post.slug}`}>
+                                                        Read More →
+                                                    </Link>
+                                                </Button>
+                                            </div>
                                         </div>
                                     </CardContent>
                                 </Card>
